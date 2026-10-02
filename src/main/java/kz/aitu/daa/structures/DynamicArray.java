@@ -17,6 +17,9 @@ public class DynamicArray implements IntList {
 
     @Override
     public void add(int x) {
+        if (size == data.length) {
+            grow();
+        }
         data[size] = x;
         size++;
     }
@@ -48,9 +51,22 @@ public class DynamicArray implements IntList {
         return size;
     }
 
+    public int capacity() {
+        return data.length;
+    }
+
     @Override
     public Metrics metrics() {
         return metrics;
+    }
+
+    private void grow() {
+        int[] newData = new int[data.length * 2];
+        for (int i = 0; i < size; i++) {
+            newData[i] = data[i];
+            metrics.move();
+        }
+        data = newData;
     }
 
     private void checkIndex(int index) {
