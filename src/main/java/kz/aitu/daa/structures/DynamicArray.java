@@ -26,12 +26,29 @@ public class DynamicArray implements IntList {
 
     @Override
     public void add(int index, int x) {
-        throw new UnsupportedOperationException("not implemented yet");
+        checkPositionIndex(index);
+        if (size == data.length) {
+            grow();
+        }
+        for (int i = size; i > index; i--) {
+            data[i] = data[i - 1];
+            metrics.move();
+        }
+        data[index] = x;
+        size++;
     }
 
     @Override
     public int remove(int index) {
-        throw new UnsupportedOperationException("not implemented yet");
+        checkIndex(index);
+        metrics.step();
+        int removed = data[index];
+        for (int j = index; j < size - 1; j++) {
+            data[j] = data[j + 1];
+            metrics.move();
+        }
+        size--;
+        return removed;
     }
 
     @Override
@@ -43,7 +60,14 @@ public class DynamicArray implements IntList {
 
     @Override
     public boolean contains(int x) {
-        throw new UnsupportedOperationException("not implemented yet");
+        for (int i = 0; i < size; i++) {
+            metrics.step();
+            metrics.compare();
+            if (data[i] == x) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -71,6 +95,12 @@ public class DynamicArray implements IntList {
 
     private void checkIndex(int index) {
         if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", size: " + size);
+        }
+    }
+
+    private void checkPositionIndex(int index) {
+        if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", size: " + size);
         }
     }
