@@ -89,7 +89,16 @@ public class MyLinkedList implements IntList {
 
     @Override
     public boolean contains(int x) {
-        throw new UnsupportedOperationException("not implemented yet");
+        Node cur = head;
+        while (cur != null) {
+            metrics.step();
+            metrics.compare();
+            if (cur.val == x) {
+                return true;
+            }
+            cur = cur.next;
+        }
+        return false;
     }
 
     @Override
