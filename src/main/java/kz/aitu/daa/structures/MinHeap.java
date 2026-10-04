@@ -32,6 +32,21 @@ public class MinHeap {
         return heap[0];
     }
 
+    public int extractMin() {
+        if (size == 0) {
+            throw new IllegalStateException("heap is empty");
+        }
+        metrics.step();
+        int min = heap[0];
+        size--;
+        if (size > 0) {
+            heap[0] = heap[size];
+            metrics.move();
+            siftDown(0);
+        }
+        return min;
+    }
+
     public int size() {
         return size;
     }
@@ -63,6 +78,30 @@ public class MinHeap {
             }
             swap(i, parent);
             i = parent;
+        }
+    }
+
+    private void siftDown(int i) {
+        while (true) {
+            int left = 2 * i + 1;
+            if (left >= size) {
+                break;
+            }
+            int right = left + 1;
+            int smallest = left;
+            metrics.step();
+            if (right < size) {
+                metrics.compare();
+                if (heap[right] < heap[left]) {
+                    smallest = right;
+                }
+            }
+            metrics.compare();
+            if (heap[i] <= heap[smallest]) {
+                break;
+            }
+            swap(i, smallest);
+            i = smallest;
         }
     }
 
