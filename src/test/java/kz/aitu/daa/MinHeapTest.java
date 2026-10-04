@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.Random;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -183,6 +184,68 @@ class MinHeapTest {
         assertTrue(m.getComparisons() <= 2 * 10, "comparisons " + m.getComparisons());
         assertTrue(m.getMoves() <= 1 + 2 * 10, "moves " + m.getMoves());
         assertTrue(heap.isValidHeap());
+    }
+
+    @Test
+    void buildHeapProducesValidHeapAndSortedOutput() {
+        Random random = new Random(42);
+        int[] data = new int[10_000];
+        for (int i = 0; i < data.length; i++) {
+            data[i] = random.nextInt(2_000_001) - 1_000_000;
+        }
+        MinHeap heap = MinHeap.buildHeap(data);
+        assertTrue(heap.isValidHeap());
+        assertEquals(data.length, heap.size());
+        int[] sorted = data.clone();
+        Arrays.sort(sorted);
+        for (int expected : sorted) {
+            assertEquals(expected, heap.extractMin());
+        }
+    }
+
+    @Test
+    void buildHeapDoesNotChangeInput() {
+        int[] data = { 5, 3, 8, 1 };
+        MinHeap.buildHeap(data);
+        assertArrayEquals(new int[] { 5, 3, 8, 1 }, data);
+    }
+
+    @Test
+    void buildHeapOfEmptyArrayIsUsable() {
+        MinHeap heap = MinHeap.buildHeap(new int[0]);
+        assertTrue(heap.isEmpty());
+        heap.insert(1);
+        assertEquals(1, heap.peekMin());
+    }
+
+    @Test
+    void builtHeapKeepsGrowingOnInsert() {
+        MinHeap heap = MinHeap.buildHeap(new int[] { 3, 1, 2 });
+        for (int i = 0; i < 100; i++) {
+            heap.insert(100 - i);
+        }
+        assertTrue(heap.isValidHeap());
+        assertEquals(103, heap.size());
+        assertEquals(1, heap.extractMin());
+    }
+
+    @Test
+    void buildHeapIsLinearWhileRepeatedInsertIsNot() {
+        int n = 100_000;
+        int[] descending = new int[n];
+        for (int i = 0; i < n; i++) {
+            descending[i] = n - i;
+        }
+        MinHeap built = MinHeap.buildHeap(descending);
+        MinHeap inserted = new MinHeap();
+        for (int v : descending) {
+            inserted.insert(v);
+        }
+        long builtComparisons = built.metrics().getComparisons();
+        long insertedComparisons = inserted.metrics().getComparisons();
+        assertTrue(builtComparisons <= 2L * n, "buildHeap comparisons " + builtComparisons);
+        assertTrue(insertedComparisons > 5 * builtComparisons,
+                "insert " + insertedComparisons + " vs build " + builtComparisons);
     }
 
     @Test

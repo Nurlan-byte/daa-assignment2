@@ -11,8 +11,24 @@ public class MinHeap {
     private final Metrics metrics = new Metrics();
 
     public MinHeap() {
-        heap = new int[DEFAULT_CAPACITY];
+        this(DEFAULT_CAPACITY);
+    }
+
+    private MinHeap(int capacity) {
+        heap = new int[capacity];
         size = 0;
+    }
+
+    public static MinHeap buildHeap(int[] values) {
+        MinHeap result = new MinHeap(Math.max(DEFAULT_CAPACITY, values.length));
+        for (int i = 0; i < values.length; i++) {
+            result.heap[i] = values[i];
+        }
+        result.size = values.length;
+        for (int i = result.size / 2 - 1; i >= 0; i--) {
+            result.siftDown(i);
+        }
+        return result;
     }
 
     public void insert(int x) {
