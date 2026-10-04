@@ -2,6 +2,7 @@ package kz.aitu.daa;
 
 import kz.aitu.daa.structures.DynamicArray;
 import kz.aitu.daa.structures.IntList;
+import kz.aitu.daa.structures.MyLinkedList;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -23,7 +24,9 @@ class IntListContractTest {
 
     static Stream<Arguments> lists() {
         return Stream.of(
-                arguments(named("DynamicArray", (Supplier<IntList>) DynamicArray::new)));
+                arguments(named("DynamicArray", (Supplier<IntList>) DynamicArray::new)),
+                arguments(named("MyLinkedList", (Supplier<IntList>) MyLinkedList::new))
+        );
     }
 
     private static IntList listOf(Supplier<IntList> factory, int... values) {
